@@ -1,5 +1,5 @@
 {
-  "name": "yam",
+  "name": "mygulp",
   "version": "1.0.0",
   "description": "Устанавливаем пакеты: <br> npm i <br> Строим продакшн: <br> gulp build <br> Запускаем сервер: <br> gulp",
   "main": "gulpfile.js",
