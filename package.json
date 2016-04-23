@@ -33,12 +33,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vadimmelnikov/yam.git"
+    "url": "git+https://github.com/vadimmelnikov/mygulp.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vadimmelnikov/yam/issues"
+    "url": "https://github.com/vadimmelnikov/mygulp/issues"
   },
-  "homepage": "https://github.com/vadimmelnikov/yam#readme"
+  "homepage": "https://github.com/vadimmelnikov/mygulp#readme"
 }
