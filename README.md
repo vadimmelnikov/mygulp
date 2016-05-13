@@ -8,7 +8,7 @@ Gulp для верстки
   - gulp-sass
   - gulp-autoprefixer
   - livereload
-  - more https://github.com/vadimmelnikov/mygulp/blob/master/package.json
+  - more... https://github.com/vadimmelnikov/mygulp/blob/master/package.json
 
 Для использования необходимо установить:
 
