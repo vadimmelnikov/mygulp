@@ -16,11 +16,22 @@ var mainBowerFiles = require('main-bower-files'),
     pngquant = require('imagemin-pngquant');
 
 var dest_path = 'public';
-
+function log(error) {
+    console.log([
+        '',
+        "----------ERROR MESSAGE START----------",
+        ("[" + error.name + " in " + error.plugin + "]"),
+        error.message,
+        "----------ERROR MESSAGE END----------",
+        ''
+    ].join('\n'));
+    this.end();
+}
 // Работа с jade
 gulp.task('jade', function() {
     gulp.src('app/templates/*.jade')
         .pipe(jade({pretty: true}))
+        .on('error', log)
         .pipe(gulp.dest(dest_path + '/'))
         .pipe(connect.reload());
 });
@@ -31,6 +42,11 @@ var autoprefixerOptions = {
 // Работа с Sass
 gulp.task('sass', function() {
     gulp.src('app/sass/*.scss')
+        .pipe( sass().on( 'error', function( error )
+                {
+                    console.log( error );
+                } )
+            )
         .pipe(sass({
             // sourceComments: 'map'
         }))
