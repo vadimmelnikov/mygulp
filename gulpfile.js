@@ -14,7 +14,6 @@ var mainBowerFiles = require('main-bower-files'),
     cssmin = require('gulp-cssmin'),
     imagemin = require('gulp-imagemin'),
     pngquant = require('imagemin-pngquant'),
-    svgSprite = require("gulp-svg-sprites"),
     watch = require('gulp-watch');
 
 var dest_path = 'public';
@@ -229,8 +228,3 @@ gulp.task('default', ['serv_livereload', 'watch']);
 // Для ie
 gulp.task('serv', ['serv_no_livereload', 'watch']);
 
-gulp.task('sprites', function () {
-    return gulp.src('app/images/svg/*.svg')
-        .pipe(svgSprite({mode: "defs"}))
-        .pipe(gulp.dest("assets"));
-});
