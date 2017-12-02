@@ -2,7 +2,7 @@ var gulp = require("gulp"),
     connect = require("gulp-connect"),
     opn = require("opn"),
     sass = require("gulp-sass"),
-    jade = require("gulp-jade"),
+    pug = require("gulp-pug"),
     browserSync = require('browser-sync').create();
 
 var mainBowerFiles = require('main-bower-files'),
@@ -29,9 +29,9 @@ function log(error) {
     this.end();
 }
 // Работа с jade
-gulp.task('jade', function() {
-    gulp.src('app/templates/*.jade')
-        .pipe(jade({pretty: true}))
+gulp.task('pug', function() {
+    gulp.src('app/templates/*.pug')
+        .pipe(pug({pretty: true}))
         .on('error', log)
         .pipe(gulp.dest(dest_path + '/'))
         .pipe(connect.reload());
@@ -44,14 +44,14 @@ var autoprefixerOptions = {
 gulp.task('sass', function() {
     gulp.src('app/sass/*.scss')
         .pipe( sass().on( 'error', function( error )
-                {
-                    console.log( error );
-                } )
-            )
+            {
+                console.log( error );
+            } )
+        )
         .pipe(sass({
             // sourceComments: 'map'
         }))
-//        .pipe(prefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+        //        .pipe(prefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer(autoprefixerOptions))
         .pipe(gulp.dest( dest_path + '/css/'))
@@ -88,11 +88,11 @@ gulp.task('fonts', function () {
 
 // Вытянуть зависимости из bower.json и сложить их public
 gulp.task('libs', function() {
-    var jsFilter = gulpFilter('*.js');
-    var cssFilter = gulpFilter('*.css');
-    var fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf']);
+    var jsFilter = gulpFilter('*.js', {restore: true});
+    var cssFilter = gulpFilter('*.css', {restore: true});
+    var fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf'], {restore: true});
 
-    // mainBowerFiles - берёт инфу о проекте из .bower.json, но не у всех либ есть параметр main, поэтому делаем хак, 
+    // mainBowerFiles - берёт инфу о проекте из .bower.json, но не у всех либ есть параметр main, поэтому делаем хак,
     // что бы эти глюкобажные либы тоже скопировались!
     var fix_libs_paths = [
         // 'corner/jquery.corner.js',
@@ -130,7 +130,7 @@ gulp.task('libs', function() {
 
     gulp.src(paths)
 
-        // grab vendor js files from bower_components, minify and push in /public/js/vendor
+    // grab vendor js files from bower_components, minify and push in /public/js/vendor
         .pipe(jsFilter)
         .pipe(gulp.dest(dest_path + '/js/vendor'))
         .pipe(uglify())
@@ -138,7 +138,7 @@ gulp.task('libs', function() {
             suffix: ".min"
         }))
         .pipe(gulp.dest(dest_path + '/js/vendor'))
-        .pipe(jsFilter.restore())
+        .pipe(jsFilter.restore)
 
         // grab vendor css files from bower_components, minify and push in /public/css
         .pipe(cssFilter)
@@ -148,7 +148,7 @@ gulp.task('libs', function() {
             suffix: ".min"
         }))
         .pipe(gulp.dest(dest_path + '/css'))
-        .pipe(cssFilter.restore())
+        .pipe(cssFilter.restore)
 
         // grab vendor font files from bower_components and push in /public/fonts
         .pipe(fontFilter)
@@ -158,7 +158,7 @@ gulp.task('libs', function() {
 
 // Такс запускает одной командой все предыдущие таски
 gulp.task('build', [
-    'jade',
+    'pug',
     'sass',
     'js',
     'image',
@@ -166,7 +166,7 @@ gulp.task('build', [
     'libs'
 ]);
 
-// Если вы добавите какую-нибудь картинку, потом запустите задачу image и потом картинку удалите — она останется в папке public. 
+// Если вы добавите какую-нибудь картинку, потом запустите задачу image и потом картинку удалите — она останется в папке public.
 // Так что было бы удобно — периодически подчищать ее. Создадим для этого простой таск
 gulp.task('clean', function (cb) {
     rimraf(dest_path, cb);
@@ -179,8 +179,8 @@ gulp.task('watch', function() {
     watch(['./app/images/**/*.*'], function(event, cb) {
         gulp.start('image');
     });
-    watch(['./app/templates/**/*.jade'], function(event, cb) {
-        gulp.start('jade');
+    watch(['./app/templates/**/*.pug'], function(event, cb) {
+        gulp.start('pug');
     });
     watch(['./app/sass/**/*.scss'], function(event, cb) {
         gulp.start('sass');
@@ -222,9 +222,8 @@ gulp.task('serv_no_livereload', function() {
 });
 
 
-// Задача по-умолчанию 
+// Задача по-умолчанию
 gulp.task('default', ['serv_livereload', 'watch']);
 
 // Для ie
 gulp.task('serv', ['serv_no_livereload', 'watch']);
-
