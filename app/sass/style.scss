@@ -29,7 +29,7 @@ body {
 }
 .container {
     margin: 0 auto;
-    padding: 0 5%;
+    padding: 0 30px;
     position: relative;
     @include clearfix();
     @include breakpoint(phablet) {

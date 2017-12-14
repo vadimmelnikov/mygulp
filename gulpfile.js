@@ -1,11 +1,11 @@
-var gulp = require("gulp"),
+const gulp = require("gulp"),
     connect = require("gulp-connect"),
     opn = require("opn"),
     sass = require("gulp-sass"),
     pug = require("gulp-pug"),
     browserSync = require('browser-sync').create();
 
-var mainBowerFiles = require('main-bower-files'),
+const mainBowerFiles = require('main-bower-files'),
     gulpFilter = require('gulp-filter'),
     rename = require('gulp-rename'),
     rimraf = require('rimraf'),
@@ -14,9 +14,11 @@ var mainBowerFiles = require('main-bower-files'),
     cssmin = require('gulp-cssmin'),
     imagemin = require('gulp-imagemin'),
     pngquant = require('imagemin-pngquant'),
+	babel = require('gulp-babel'),
+	plumber = require('gulp-plumber'),
     watch = require('gulp-watch');
 
-var dest_path = 'public';
+const dest_path = 'public';
 function log(error) {
     console.log([
         '',
@@ -37,7 +39,7 @@ gulp.task('pug', function() {
         .pipe(connect.reload());
 });
 
-var autoprefixerOptions = {
+const autoprefixerOptions = {
     browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4']
 };
 // Работа с Sass
@@ -59,10 +61,14 @@ gulp.task('sass', function() {
 });
 
 // Работа с js
-gulp.task('js', function() {
-    gulp.src('./app/js/**/*.js')
-        .pipe(gulp.dest( dest_path + '/js/'))
-        .pipe(connect.reload());
+gulp.task('js', function () {
+	gulp.src('./app/js/**/*.js')
+		.pipe(plumber())
+		.pipe(babel({
+			presets: ['env']
+		}))
+		.pipe(gulp.dest(dest_path + '/js/'))
+		.pipe(connect.reload());
 });
 
 // Сборка IMG
@@ -88,13 +94,13 @@ gulp.task('fonts', function () {
 
 // Вытянуть зависимости из bower.json и сложить их public
 gulp.task('libs', function() {
-    var jsFilter = gulpFilter('*.js', {restore: true});
-    var cssFilter = gulpFilter('*.css', {restore: true});
-    var fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf'], {restore: true});
+    const jsFilter = gulpFilter('*.js', {restore: true});
+    const cssFilter = gulpFilter('*.css', {restore: true});
+    const fontFilter = gulpFilter(['*.eot', '*.woff', '*.svg', '*.ttf'], {restore: true});
 
     // mainBowerFiles - берёт инфу о проекте из .bower.json, но не у всех либ есть параметр main, поэтому делаем хак,
     // что бы эти глюкобажные либы тоже скопировались!
-    var fix_libs_paths = [
+    const fix_libs_paths = [
         // 'corner/jquery.corner.js',
         // 'normalize-css/normalize.css',
         // 'respond/dest/respond.min.js',
@@ -123,7 +129,7 @@ gulp.task('libs', function() {
         'modernizr/modernizr.js'
     ];
 
-    var paths = mainBowerFiles();
+    const paths = mainBowerFiles();
     for(var i=0; i < fix_libs_paths.length; i++){
         paths[paths.length] = './app/vendor/' + fix_libs_paths[i];
     }
